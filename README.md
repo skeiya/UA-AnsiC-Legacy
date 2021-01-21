@@ -1,6 +1,12 @@
 # OPC Foundation UA ANSI C Stack Legacy
+---
+**NOTE**
 
-**This repository is provided by OPC Foundation as legacy support for an AnsiC version for OPC UA. It will not receive further features and updates.**
+This repository (https://github.com/OPCFoundation/UA-AnsiC-Legacy) will be closed end of February 2021. 
+The license  for any forks of this repository remains unchanged, i.e. RCL for OPC corporate members and GPL-V2 for anybody else. Note that under the RCL all derivative work you author including schemas, scripts, source code, documentation, etc. -- must be shared.
+If you create such derivative work, please submit the changed files as a ZIP to AnsiC@opcfoundation.org instead of issuing a pull request.
+
+---
 
 The OPC Foundation will continue maintenance of the .NET Stack which is based on .NET Standard. It can be found [here](https://github.com/OPCFoundation/UA-.NETStandard).
 
