@@ -6,7 +6,7 @@ If you create such derivative work, please submit the changed files as a ZIP to 
 
 **When composing the email please:**
 1) **Use an email address from the member who is complying with the license;**
-2) **Use subject of the form: 'RCL Submission from <MemberName>';**
+2) **Use subject of the form: 'RCL Submission from {MemberName}';**
 3) **The name of the submitter.**
 ---
 
