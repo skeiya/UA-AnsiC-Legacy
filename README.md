@@ -4,7 +4,7 @@
 
 **This repository (https://github.com/OPCFoundation/UA-AnsiC-Legacy) will be closed end of February 2021. 
 The license  for any forks of this repository remains unchanged, i.e. RCL for OPC corporate members and GPL-V2 for anybody else. Note that under the RCL all derivative work you author including schemas, scripts, source code, documentation, etc. -- must be shared.
-If you create such derivative work, please submit the changed files as a ZIP to AnsiC@opcfoundation.org instead of issuing a pull request.**
+If you create such derivative work, please submit the changed files as a ZIP to opc-rcl-submissions@opcfoundation.online instead of issuing a pull request.**
 
 ---
 
