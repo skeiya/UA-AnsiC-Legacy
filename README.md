@@ -4,9 +4,9 @@
 The license  for any forks of this repository remains unchanged, i.e. RCL for OPC corporate members and GPL-V2 for anybody else. Note that under the RCL all derivative work you author including schemas, scripts, source code, documentation, etc. -- must be shared.
 If you create such derivative work, please submit the changed files as a ZIP to opc-rcl-submissions@opcfoundation.online instead of issuing a pull request.**
 
-**At the top of the email please:**
+**When composing the email please:**
 1) **Use an email address from the member who is complying with the license;**
-2) **The name and address for the member;**
+2) **Use subject of the form: 'RCL Submission from <MemberName>';**
 3) **The name of the submitter.**
 ---
 
