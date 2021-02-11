@@ -69,7 +69,6 @@ OpcUa_StatusCode my_Browse(
 	extern OpcUa_UInt32		securechannelId;
 	extern OpcUa_UInt32		session_flag;
 	extern OpcUa_Double		msec_counter;
-	extern OpcUa_String*	p_user_name;
 	extern OpcUa_UInt32		max_ref_per_node;
 
     OpcUa_InitializeStatus(OpcUa_Module_Server, "OpcUa_ServerApi_Browse");
@@ -92,8 +91,6 @@ OpcUa_StatusCode my_Browse(
 
 #ifndef NO_DEBUGGING_
 	MY_TRACE("\n\n\nBROWSE SERVICE=============================================\n");
-	if(p_user_name!=OpcUa_Null)
-		MY_TRACE("\nUser:%s\n",OpcUa_String_GetRawString(p_user_name));  
 #endif /*_DEBUGGING_*/
 
 

@@ -64,7 +64,6 @@ OpcUa_StatusCode my_BrowseNext(
 	extern OpcUa_UInt32		securechannelId;
 	extern OpcUa_UInt32		session_flag;
 	extern OpcUa_Double		msec_counter;
-	extern OpcUa_String*	p_user_name;
 
     OpcUa_InitializeStatus(OpcUa_Module_Server, "my_BrowseNext");
 
@@ -87,8 +86,6 @@ OpcUa_StatusCode my_BrowseNext(
 
 #ifndef NO_DEBUGGING_
 	MY_TRACE("\n\n\nBROWSENEXT SERVICE=========================================\n");
-	if(p_user_name!=OpcUa_Null)
-		MY_TRACE("\nUser:%s\n",OpcUa_String_GetRawString(p_user_name)); 
 #endif /*_DEBUGGING_*/
 
 

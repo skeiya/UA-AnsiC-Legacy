@@ -46,7 +46,6 @@
 OpcUa_StatusCode		check_authentication_token										(const OpcUa_RequestHeader* );
 OpcUa_StatusCode		check_securechannelId											(OpcUa_Endpoint ,  OpcUa_Handle );
 OpcUa_StatusCode		check_useridentitytoken											(const OpcUa_ExtensionObject* );
-OpcUa_StatusCode		save_username												    (const OpcUa_ExtensionObject* );
 OpcUa_Void				username_free													(OpcUa_Void);
 OpcUa_StatusCode		check_username												    (const OpcUa_ExtensionObject*);
 OpcUa_StatusCode		check_password													(const OpcUa_ExtensionObject* );

@@ -94,7 +94,6 @@ char * UATESTSERVER_ENDPOINT_URL = "opc.tcp://localhost:4840";
 OpcUa_UInt32		securechannelId;
 OpcUa_UInt32		session_flag;
 OpcUa_Double		session_timeout;
-OpcUa_String*		p_user_name;
 OpcUa_Timer         Timer;
 OpcUa_Double		msec_counter;
 OpcUa_StatusCode OPCUA_DLLCALL Timer_Callback(  OpcUa_Void*             pvCallbackData, 
@@ -365,9 +364,6 @@ OpcUa_Void UaTestServer_Clear(OpcUa_Void)
 {
 	OpcUa_BrowseDescription_Clear(&Continuation_Point_Data.NodeToBrowse);
 
-	if(p_user_name!=OpcUa_Null)
-		username_free();
-	
 	OpcUa_Timer_Delete(&Timer);
 	
     UaTestServer_SecurityClear();
@@ -585,8 +581,6 @@ OpcUa_StatusCode myserverGetEndpointsService(
 #endif /*_DEBUGGING_*/
   
 	session_flag=SESSION_NOT_ACTIVATED;
-	if(p_user_name!=OpcUa_Null)
-			username_free();
 	OpcUa_Timer_Delete(&Timer);
 
 	/* need to pass CTT-test---------------------------------*/
@@ -883,12 +877,6 @@ OpcUa_StatusCode my_ActivateSession(
 	session_flag=SESSION_ACTIVATED;
 
 #ifndef NO_DEBUGGING_
-	if(p_user_name!=OpcUa_Null)
-		MY_TRACE("\nUser(%s) logged in\n",OpcUa_String_GetRawString(p_user_name)); 
-#endif /*_DEBUGGING_*/
-
-
-#ifndef NO_DEBUGGING_
 		MY_TRACE("\nSession activated!!!\n"); 
 #endif /*_DEBUGGING_*/
 	
@@ -959,9 +947,6 @@ OpcUa_StatusCode my_CloseSession(
 	if(OpcUa_IsBad(session_flag))
 	{
 		/* Tell client that session is closed. */
-		if(p_user_name!=OpcUa_Null)
-			username_free();
-
 		OpcUa_Timer_Delete(&Timer);
 		
 #ifndef NO_DEBUGGING_
@@ -988,13 +973,6 @@ OpcUa_StatusCode my_CloseSession(
 	OpcUa_BrowseDescription_Clear(&Continuation_Point_Data.NodeToBrowse);
 
 	session_flag=SESSION_NOT_ACTIVATED;
-
-#ifndef NO_DEBUGGING_
-	if(p_user_name!=OpcUa_Null)
-		MY_TRACE("\nUser(%s) logged out\n",OpcUa_String_GetRawString(p_user_name)); 
-#endif /*_DEBUGGING_*/
-	if(p_user_name!=OpcUa_Null)
-		username_free();
 
 #ifndef NO_DEBUGGING_
 	MY_TRACE("\nSession closed!\n"); 
@@ -1102,34 +1080,15 @@ OpcUa_BeginErrorHandling;
 OpcUa_FinishErrorHandling;
 }
 
-
-
-
-OpcUa_StatusCode save_username(const OpcUa_ExtensionObject* p_UserIdentityToken)
-{
-	OpcUa_StatusCode        uStatus     = OpcUa_Good;
-	OpcUa_ReturnErrorIfArgumentNull(p_UserIdentityToken)
-	p_user_name=OpcUa_Alloc(sizeof(OpcUa_String));
-	OpcUa_ReturnErrorIfAllocFailed(p_user_name)
-	uStatus=OpcUa_String_StrnCpy(p_user_name,&((OpcUa_UserNameIdentityToken*)p_UserIdentityToken->Body.EncodeableObject.Object)->UserName,OPCUA_STRING_LENDONTCARE);
-	return uStatus;
-}
-
-OpcUa_Void username_free(OpcUa_Void)
-{
-	OpcUa_String_Delete(&p_user_name);
-}
-
 OpcUa_StatusCode check_username(const OpcUa_ExtensionObject* p_UserIdentityToken)
 {
 	OpcUa_StatusCode        uStatus     = OpcUa_Good;
 	OpcUa_ReturnErrorIfArgumentNull(p_UserIdentityToken)
-	OpcUa_ReturnErrorIfArgumentNull(p_user_name)
-	if(OpcUa_String_StrLen(p_user_name)!=OpcUa_String_StrLen(&((OpcUa_UserNameIdentityToken*)p_UserIdentityToken->Body.EncodeableObject.Object)->UserName))
+	if(OpcUa_String_StrLen("oreore")!=OpcUa_String_StrLen(&((OpcUa_UserNameIdentityToken*)p_UserIdentityToken->Body.EncodeableObject.Object)->UserName))
 	{
 		return OpcUa_Bad;
 	}
-	if( (OpcUa_String_StrnCmp(   p_user_name, 
+	if( (OpcUa_String_StrnCmp(   "oreore", 
 								&((OpcUa_UserNameIdentityToken*)p_UserIdentityToken->Body.EncodeableObject.Object)->UserName, 
 								OPCUA_STRING_LENDONTCARE, 
 								OpcUa_False))==0)
@@ -1145,7 +1104,7 @@ OpcUa_StatusCode check_username(const OpcUa_ExtensionObject* p_UserIdentityToken
 OpcUa_StatusCode check_password(const OpcUa_ExtensionObject* p_UserIdentityToken)
 {
 	OpcUa_UInt i;
-	OpcUa_CharA password[8]={'S','o','f','t','i','n','g','!'};
+	OpcUa_CharA password[4]={'h','o','g','e'};
 	OpcUa_StatusCode        uStatus     = OpcUa_Good;
 	OpcUa_ReturnErrorIfArgumentNull(p_UserIdentityToken);
 	if(OpcUa_String_GetRawString(&((OpcUa_UserNameIdentityToken*)p_UserIdentityToken->Body.EncodeableObject.Object)->PolicyId)== OpcUa_Null)
@@ -1158,11 +1117,11 @@ OpcUa_StatusCode check_password(const OpcUa_ExtensionObject* p_UserIdentityToken
 		return OpcUa_BadIdentityTokenRejected;
 	}
 
-	if((((OpcUa_UserNameIdentityToken*)p_UserIdentityToken->Body.EncodeableObject.Object)->Password.Length)!=8)
+	if((((OpcUa_UserNameIdentityToken*)p_UserIdentityToken->Body.EncodeableObject.Object)->Password.Length)!=4)
 	{
 		OpcUa_ReturnErrorIfBad(OpcUa_Bad)
 	}
-	for(i=0;i<8;i++)
+	for(i=0;i<4;i++)
 	{
 		if(*((OpcUa_Byte*)(((OpcUa_UserNameIdentityToken*)p_UserIdentityToken->Body.EncodeableObject.Object)->Password.Data+i))!=(OpcUa_Byte)password[i])
 		{
@@ -1200,40 +1159,13 @@ OpcUa_StatusCode check_useridentitytoken(const OpcUa_ExtensionObject* p_UserIden
 	
 	if((OpcUa_UInt32)(p_UserIdentityToken->TypeId.NodeId.Identifier.Numeric)== OpcUaId_UserNameIdentityToken_Encoding_DefaultBinary)
 	{
-			if(p_user_name!=OpcUa_Null)
+			uStatus=check_username(p_UserIdentityToken);
+			if(OpcUa_IsGood(uStatus))
 			{
-				uStatus=check_username(p_UserIdentityToken);
-				if(OpcUa_IsGood(uStatus))
-				{
-					uStatus=check_password(p_UserIdentityToken);
-					if(OpcUa_IsGood(uStatus))
-						uStatus=OpcUa_Good;
-					else
-					{
-						#ifndef NO_DEBUGGING_
-							if(OpcUa_IsEqual(OpcUa_BadIdentityTokenRejected))
-								MY_TRACE("\nWrong PolicyId!!!\n");
-							else
-								MY_TRACE("\nWrong Password!!!\n"); 
-						#endif /*_DEBUGGING_*/
-						uStatus=OpcUa_BadIdentityTokenRejected;
-
-					}
-				}
-				else
-				{
-					uStatus=OpcUa_BadIdentityTokenRejected;
-					#ifndef NO_DEBUGGING_
-					MY_TRACE("\nWrong Password!!!\n"); 
-					#endif /*_DEBUGGING_*/
-				}
-			}
-			else
-			{
-				uStatus=save_username(p_UserIdentityToken);
-				OpcUa_ReturnErrorIfBad(uStatus)
 				uStatus=check_password(p_UserIdentityToken);
-				if(OpcUa_IsBad(uStatus))
+				if(OpcUa_IsGood(uStatus))
+					uStatus=OpcUa_Good;
+				else
 				{
 					#ifndef NO_DEBUGGING_
 						if(OpcUa_IsEqual(OpcUa_BadIdentityTokenRejected))
@@ -1242,14 +1174,31 @@ OpcUa_StatusCode check_useridentitytoken(const OpcUa_ExtensionObject* p_UserIden
 							MY_TRACE("\nWrong Password!!!\n"); 
 					#endif /*_DEBUGGING_*/
 					uStatus=OpcUa_BadIdentityTokenRejected;
+
 				}
 			}
-	}
-	else
-	{
-		uStatus=OpcUa_BadIdentityTokenInvalid;
-	}
-
+			else
+			{
+				uStatus=OpcUa_BadIdentityTokenRejected;
+				#ifndef NO_DEBUGGING_
+				MY_TRACE("\nWrong Password!!!\n"); 
+				#endif /*_DEBUGGING_*/
+			}
+		}
+		else
+		{
+			uStatus=check_password(p_UserIdentityToken);
+			if(OpcUa_IsBad(uStatus))
+			{
+				#ifndef NO_DEBUGGING_
+					if(OpcUa_IsEqual(OpcUa_BadIdentityTokenRejected))
+						MY_TRACE("\nWrong PolicyId!!!\n");
+					else
+						MY_TRACE("\nWrong Password!!!\n"); 
+				#endif /*_DEBUGGING_*/
+				uStatus=OpcUa_BadIdentityTokenRejected;
+			}
+		}
 	
     OpcUa_ReturnStatusCode;
 	OpcUa_BeginErrorHandling;
@@ -1329,8 +1278,6 @@ OpcUa_StatusCode OPCUA_DLLCALL Timer_Callback(  OpcUa_Void*             pvCallba
 	{
 		session_flag=SESSION_NOT_ACTIVATED;
 		OpcUa_Timer_Delete(&Timer);
-		if(p_user_name!=OpcUa_Null)
-			username_free();
 		#ifndef NO_DEBUGGING_
 		MY_TRACE("\nSession expired!!!\n"); 
 		#endif /*_DEBUGGING_*/
@@ -1440,8 +1387,8 @@ OpcUa_StatusCode InitEndpointA(OpcUa_EndpointDescription* pEndpoint)
 	OpcUa_EndpointDescription_Initialize(pEndpoint);
 
 	(pEndpoint)->UserIdentityTokens = OpcUa_Memory_Alloc(2 * sizeof(OpcUa_UserTokenPolicy));
-	OpcUa_GotoErrorIfAllocFailed(((pEndpoint)->UserIdentityTokens))
-		OpcUa_UserTokenPolicy_Initialize((pEndpoint)->UserIdentityTokens);
+	OpcUa_GotoErrorIfAllocFailed(((pEndpoint)->UserIdentityTokens));
+	OpcUa_UserTokenPolicy_Initialize((pEndpoint)->UserIdentityTokens);
 	OpcUa_UserTokenPolicy_Initialize(((pEndpoint)->UserIdentityTokens + 1));
 
 	/* endpointUrl */

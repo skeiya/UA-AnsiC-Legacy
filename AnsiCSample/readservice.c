@@ -64,7 +64,6 @@ OpcUa_StatusCode my_Read(
 	extern OpcUa_UInt32		securechannelId;
 	extern OpcUa_UInt32		session_flag;
 	extern OpcUa_Double		msec_counter;
-	extern OpcUa_String*	p_user_name;
 
     OpcUa_InitializeStatus(OpcUa_Module_Server, "my_Read");
 
@@ -86,8 +85,6 @@ OpcUa_StatusCode my_Read(
 
  #ifndef NO_DEBUGGING_
 	MY_TRACE("\n\n\nREAD SERVICE==============================================\n");
-	if(p_user_name!=OpcUa_Null)
-		MY_TRACE("\nUser:%s\n",OpcUa_String_GetRawString(p_user_name)); 
 #endif /*_DEBUGGING_*/
   
 
