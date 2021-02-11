@@ -18,8 +18,8 @@
 */linux/*
 */win32/*
 */VS2013/*
-*/Debug/*
-*/Release/*
+**/Debug/*
+**/Release/*
 build/**
 openssl*/*
 *.o
@@ -37,3 +37,7 @@ openssl*/*
 *.ilk
 *.iobj
 *.ipdb
+
+*.vs
+out/*
+*.user
