@@ -1434,64 +1434,71 @@ OpcUa_StatusCode  my_GetDateTimeDiffInSeconds32(	OpcUa_DateTime  a_Value1,
     return OpcUa_Good;
 }
 
+OpcUa_StatusCode InitEndpointA(OpcUa_EndpointDescription* pEndpoint)
+{
+	OpcUa_InitializeStatus(OpcUa_Module_Server, "InitEndpointA");
+	OpcUa_EndpointDescription_Initialize(pEndpoint);
+
+	(pEndpoint)->UserIdentityTokens = OpcUa_Memory_Alloc(2 * sizeof(OpcUa_UserTokenPolicy));
+	OpcUa_GotoErrorIfAllocFailed(((pEndpoint)->UserIdentityTokens))
+		OpcUa_UserTokenPolicy_Initialize((pEndpoint)->UserIdentityTokens);
+	OpcUa_UserTokenPolicy_Initialize(((pEndpoint)->UserIdentityTokens + 1));
+
+	/* endpointUrl */
+	OpcUa_String_AttachCopy(&(pEndpoint)->EndpointUrl, UATESTSERVER_ENDPOINT_URL);
+	/*----------*/
+
+	/* ApplicationDescription */
+	uStatus = fill_server_variable(&(pEndpoint)->Server);
+	OpcUa_GotoErrorIfBad(uStatus)
+		/*----------------------*/
+
+		/* ServerCertificate */
+		/* OpcUa_Field_Initialize(ByteString, *((pEndpoint)->ServerCertificate)); */
+		/*---------------------*/
+
+		/* SecurityMode */
+		(pEndpoint)->SecurityMode = OpcUa_MessageSecurityMode_None;
+	/*------------*/
+
+	/* SecurityPolicyUri */
+	OpcUa_String_AttachCopy(&(pEndpoint)->SecurityPolicyUri, OpcUa_SecurityPolicy_None);
+	/*-----------------*/
+
+	/* UserIdentityToken */
+	(pEndpoint)->NoOfUserIdentityTokens = 2;
+	/* UserIdentityToken Number 1 */
+	(pEndpoint)->UserIdentityTokens->TokenType = OpcUa_UserTokenType_UserName;
+	OpcUa_String_AttachCopy(&(pEndpoint)->UserIdentityTokens->SecurityPolicyUri, OpcUa_SecurityPolicy_None);
+	OpcUa_String_AttachCopy(&(pEndpoint)->UserIdentityTokens->PolicyId, "3");
+	/* UserIdentityToken Number 2 */
+	((pEndpoint)->UserIdentityTokens + 1)->TokenType = OpcUa_UserTokenType_Anonymous;
+	OpcUa_String_AttachCopy(&((pEndpoint)->UserIdentityTokens + 1)->PolicyId, "0");
+	/*--------------------------*/
+
+	/* TransportProfileUri */
+	OpcUa_String_AttachCopy(&(pEndpoint)->TransportProfileUri, OpcUa_TransportProfile_UaTcp);
+	/*------------------*/
+
+	/* SecurityLevel */
+	(pEndpoint)->SecurityLevel = (OpcUa_Byte)0;
+	/*------------*/
+	OpcUa_ReturnStatusCode;
+	OpcUa_BeginErrorHandling;
+	OpcUa_FinishErrorHandling;
+}
 
 OpcUa_StatusCode getEndpoints(	OpcUa_Int32*                 a_pNoOfEndpoints,
 								OpcUa_EndpointDescription**  a_ppEndpoints)
 {
-	 OpcUa_InitializeStatus(OpcUa_Module_Server, "getEndpoints");
+	OpcUa_InitializeStatus(OpcUa_Module_Server, "getEndpoints");
+	OpcUa_Int32 endpointCount = 2;
+	*a_ppEndpoints=OpcUa_Memory_Alloc(endpointCount * sizeof(OpcUa_EndpointDescription));
+	OpcUa_GotoErrorIfAllocFailed(*a_ppEndpoints);
+	InitEndpointA(*a_ppEndpoints);
+	InitEndpointA((*a_ppEndpoints)+1);
 
-	 
-	
-	*a_ppEndpoints=OpcUa_Memory_Alloc(sizeof(OpcUa_EndpointDescription));
-	OpcUa_GotoErrorIfAllocFailed(*a_ppEndpoints)
-	OpcUa_EndpointDescription_Initialize(*a_ppEndpoints);
-
-	(*a_ppEndpoints)->UserIdentityTokens=OpcUa_Memory_Alloc(2*sizeof(OpcUa_UserTokenPolicy));
-	OpcUa_GotoErrorIfAllocFailed(((*a_ppEndpoints)->UserIdentityTokens))
-	OpcUa_UserTokenPolicy_Initialize((*a_ppEndpoints)->UserIdentityTokens);
-	OpcUa_UserTokenPolicy_Initialize(((*a_ppEndpoints)->UserIdentityTokens+1));
-
-	/* endpointUrl */
-	OpcUa_String_AttachCopy(&(*a_ppEndpoints)->EndpointUrl, UATESTSERVER_ENDPOINT_URL);
-	/*----------*/
-
-	/* ApplicationDescription */
-	uStatus=fill_server_variable(&(*a_ppEndpoints)->Server);
-	OpcUa_GotoErrorIfBad(uStatus)
-	/*----------------------*/
-
-	/* ServerCertificate */
-	/* OpcUa_Field_Initialize(ByteString, *((*a_ppEndpoints)->ServerCertificate)); */
-	/*---------------------*/
-
-	/* SecurityMode */
-    (*a_ppEndpoints)->SecurityMode=OpcUa_MessageSecurityMode_None;
-	/*------------*/
-
-	/* SecurityPolicyUri */
-	OpcUa_String_AttachCopy(&(*a_ppEndpoints)->SecurityPolicyUri, OpcUa_SecurityPolicy_None);
-	/*-----------------*/
-	
-	/* UserIdentityToken */
-	(*a_ppEndpoints)->NoOfUserIdentityTokens=2;
-	/* UserIdentityToken Number 1 */
-    (*a_ppEndpoints)->UserIdentityTokens->TokenType=OpcUa_UserTokenType_UserName;
-	OpcUa_String_AttachCopy(&(*a_ppEndpoints)->UserIdentityTokens->SecurityPolicyUri,OpcUa_SecurityPolicy_None);
-	OpcUa_String_AttachCopy(&(*a_ppEndpoints)->UserIdentityTokens->PolicyId,"3");
-	/* UserIdentityToken Number 2 */
-	 ((*a_ppEndpoints)->UserIdentityTokens+1)->TokenType=OpcUa_UserTokenType_Anonymous;
-	OpcUa_String_AttachCopy(& ((*a_ppEndpoints)->UserIdentityTokens+1)->PolicyId,"0");
-	/*--------------------------*/
-	
-	/* TransportProfileUri */
-	OpcUa_String_AttachCopy(&(*a_ppEndpoints)->TransportProfileUri, OpcUa_TransportProfile_UaTcp);
-	/*------------------*/
-
-	/* SecurityLevel */
-	(*a_ppEndpoints)->SecurityLevel=(OpcUa_Byte)0;
-	/*------------*/
-
-    *a_pNoOfEndpoints=1;
+    *a_pNoOfEndpoints= endpointCount;
 
 	OpcUa_ReturnStatusCode;
     OpcUa_BeginErrorHandling;
@@ -1504,6 +1511,8 @@ OpcUa_StatusCode getEndpoints(	OpcUa_Int32*                 a_pNoOfEndpoints,
 	*a_pNoOfEndpoints=0;
     OpcUa_FinishErrorHandling;
 }
+
+
 
 OpcUa_StatusCode fill_server_variable(OpcUa_ApplicationDescription* p_Server)
 {
